@@ -1,0 +1,40 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Http\Requests\CreateProductRequest;
+use App\Http\Resources\ProductListResource;
+use App\Http\Resources\ProductResource;
+use App\Models\Product;
+use App\Services\ProductService;
+use Illuminate\Http\Request;
+
+class ProductController extends Controller
+{
+    public ProductService $service;
+
+    public function __construct(ProductService $service)
+    {
+        $this->service = $service;
+    }
+
+    public function productList(int $page = 1)
+    {
+        $collection = collect(['list' => ProductResource::collection($this->service->getProductList($page))]);
+        return new ProductListResource($collection);
+    }
+
+    public function productById(int $id)
+    {
+        return new ProductResource(Product::findOrFail($id));
+    }
+
+    public function productByChpu(string $chpu)
+    {
+        return new ProductResource(Product::where('chpu', $chpu)->firstOrFail());
+    }
+
+    public function create(CreateProductRequest $request) {
+
+    }
+}
