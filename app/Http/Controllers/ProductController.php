@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateProductRequest;
+use App\Http\Requests\UpdateProductRequest;
 use App\Http\Resources\ProductListResource;
 use App\Http\Resources\ProductResource;
 use App\Models\Product;
@@ -35,6 +36,14 @@ class ProductController extends Controller
     }
 
     public function create(CreateProductRequest $request) {
+        return new ProductResource($this->service->createProduct($request));
+    }
 
+    public function updateProduct(int $id, UpdateProductRequest $request) {
+        return new ProductResource($this->service->updateProduct($id, $request));
+    }
+
+    public function delete(int $id) {
+        return $this->service->delete($id);
     }
 }

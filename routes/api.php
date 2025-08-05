@@ -7,6 +7,14 @@ use Illuminate\Support\Facades\Route;
 //    return $request->user();
 //})->middleware('auth:sanctum');
 
-Route::get('/products/list/{page}', [\App\Http\Controllers\ProductController::class, 'productList']);
-Route::get('/products/get-by-id/{id}', [\App\Http\Controllers\ProductController::class, 'productById']);
-Route::get('/products/get-by-chpu/{chpu}', [\App\Http\Controllers\ProductController::class, 'productByChpu']);
+
+Route::prefix('products')->group(function () {
+    $controller = \App\Http\Controllers\ProductController::class;
+    Route::get('/list/{page}', [$controller, 'productList']);
+    Route::get('/get-by-id/{id}', [$controller, 'productById']);
+    Route::get('/get-by-chpu/{chpu}', [$controller, 'productByChpu']);
+    Route::post('/create', [$controller, 'create']);
+    Route::patch('/{id}', [$controller, 'updateProduct']);
+    Route::delete('/{id}', [$controller, 'delete']);
+});
+
