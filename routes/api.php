@@ -3,11 +3,9 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-//Route::get('/user', function (Request $request) {
-//    return $request->user();
-//})->middleware('auth:sanctum');
 
 
+Route::post('/user/auth', [\App\Http\Controllers\UserController::class, 'auth']);
 Route::prefix('products')->group(function () {
     $controller = \App\Http\Controllers\ProductController::class;
     Route::get('/list/{page}', [$controller, 'productList']);

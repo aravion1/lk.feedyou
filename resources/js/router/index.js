@@ -2,6 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router';
 import Login from "../Vue/Pages/Login.vue";
 import user from "../user.js";
 import Dashboard from "../Vue/Pages/Dashboard.vue";
+import Products from "../Vue/Pages/Products.vue";
+import EditProductForm from "../Vue/Pages/EditProductForm.vue";
 const routes = [
     {
         name: 'login',
@@ -12,6 +14,16 @@ const routes = [
         name: 'dashboard',
         path: '/',
         component: Dashboard
+    },
+    {
+        name: 'products',
+        path: '/products',
+        component: Products
+    },
+    {
+        name: 'edit_products',
+        path: '/products/edit',
+        component: EditProductForm
     }
 ];
 

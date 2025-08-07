@@ -23,6 +23,16 @@ const api = {
             }
         }
         return axios.get(this.host + url, config);
+    },
+    delete: function (url) {
+        const config = {}
+        if (user.isAuth() && user.getToken() != null) {
+            let user_token = user.getToken()
+            config.headers = {
+                Authorization: `Bearer ${user_token}`
+            }
+        }
+        return axios.delete(this.host + url, config);
     }
 }
 
