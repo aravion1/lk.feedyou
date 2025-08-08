@@ -1,12 +1,36 @@
 <template>
     <Header :active="'products'"></Header>
+
     <div class="container">
-        <nav class="navbar navbar-light bg-white mb-2">
-            <form class="form-inline">
-                <a href="/products/edit" class="btn btn-outline-success" type="button">Добавить продукт</a>
-            </form>
+        <nav class="navbar navbar-expand-lg navbar-light">
+            <a href="/products/edit" class="btn btn-outline-success" type="button">Добавить продукт</a>
+
+            <div class="collapse navbar-collapse d-flex justify-content-end" id="navbarColor01">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item active">
+                        <select v-on:change="setPage(1)" v-model="take" class="form-select" aria-label="Default select example">
+                            <option value="10">Кол-во продуктов на странцие: 10</option>
+                            <option value="25">Кол-во продуктов на странцие: 25</option>
+                            <option value="50">Кол-во продуктов на странцие: 50</option>
+                            <option value="100">Кол-во продуктов на странцие: 100</option>
+                        </select>
+                    </li>
+                    <li class="nav-item" style="margin-left: 15px; margin-right: 15px">
+                        <div class="form-check form-switch align-items-center">
+                            <input v-on:change="setPage(1)" v-model="showOnlyNotFillProperties" class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
+                            <label class="form-check-label" for="flexSwitchCheckDefault">Только с не заполнеными свойствами</label>
+                        </div>
+                    </li>
+
+                </ul>
+                <form class="form-inline d-flex flex-row">
+                    <input v-model="search" class="form-control mr-sm-2" type="search" placeholder="Поиск" aria-label="Search">
+                    <input type="btn" v-on:click="setPage(1)" class="btn btn-outline-info" value="Поиск">
+                </form>
+            </div>
         </nav>
     </div>
+
     <div class="container bg-light">
         <table class="table table-striped">
             <thead>
@@ -31,7 +55,7 @@
                     <td>{{product.carbs}}</td>
                     <td>{{product.ccal}}</td>
                     <td v-if="product.meas_value == 0"> - </td>
-                    <td v-else-if="product.meas_value == 1"> мг </td>
+                    <td v-else-if="product.meas_value == 1"> г </td>
                     <td v-else> мл </td>
                     <td>
                         <ul v-for="img in product.img" class="list-group">
@@ -85,42 +109,58 @@ export default {
             products: [],
             count: 0,
             pages: [],
-            allPageCount: 0
+            allPageCount: 0,
+            take: 10,
+            showOnlyNotFillProperties: false,
+            search: ''
         }
     },
     components: {Header},
     methods: {
         getProducts: function () {
+            let getRow = `take=${this.take}&showOnlyNotFillProperties=`;
+            getRow += this.showOnlyNotFillProperties ? 1 : 0;
+            if (this.search.length != 0) {
+                getRow += `&search=${this.search}`
+            }
             let self = this;
-            api.get('/products/list/' + this.page).then(function (response) {
+            let page = this.page ?? 1;
+            api.get(`/products/list/${page}?${getRow}`).then(function (response) {
                 let response_data = response.data.data;
                 self.products = response_data.list;
                 self.count = response_data.count;
-                self.allPagesCount = self.count / 10;
+                self.allPagesCount = Math.ceil(self.count / self.take);
                 self.pages = [];
-                if (self.page <= 5) {
-                    self.pages.push(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
-                } else {
-                    let final = self.page + 5;
-                    if (final > self.allPagesCount) {
-                        final = self.allPagesCount - self.page
-                    }
-                    let start = self.page - 5;
-                    for (let i = start; i < final; i++) {
-                        self.pages.push(i)
-                    }
+                let final = self.page + 3;
+                if (final > self.allPagesCount) {
+                    final = self.allPagesCount - self.page
+                }
+                let start = self.page - 2;
+                if (start < 1) {
+                    start = 1
+                    final = self.allPagesCount < 6 ? self.allPagesCount + 1 : 6;
+                }
+                for (let i = start; i < final; i++) {
+                    self.pages.push(i)
                 }
 
             })
         },
         setPage: function (page) {
             if (!(page < 0 || page > this.allPagesCount)) {
-                this.page = page
+                this.page = +page
+                this.setFilter();
+                localStorage.setItem('product-page', page);
                 const url = new URL(window.location.href)
                 url.searchParams.set('page', page);
                 history.pushState(null, "", url);
                 this.getProducts();
             }
+        },
+        setFilter: function () {
+            localStorage.setItem('takeProduct', this.take);
+            localStorage.setItem('showOnlyNotFillPropertiesProduct', this.showOnlyNotFillProperties);
+            localStorage.setItem('search', this.search)
         },
         deleteProduct: function (key) {
             let deletedProduct = this.products[key];
@@ -146,8 +186,12 @@ export default {
     },
     mounted() {
         let params = new URLSearchParams(document.location.search);
-        this.page = params.get("page") ?? this.page;
+        this.page = +localStorage.getItem('product-page') ?? this.page;
+        this.page = !params.get('page') !== 0 ? this.page : +params.get('page');
 
+        this.take = localStorage.getItem('takeProduct') ?? 10;
+        this.showOnlyNotFillProperties = localStorage.getItem('showOnlyNotFillPropertiesProduct') ?? false;
+        this.search = localStorage.getItem('search') ?? '';
         this.getProducts();
     }
 

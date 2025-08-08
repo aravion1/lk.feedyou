@@ -20,9 +20,9 @@ class ProductController extends Controller
         $this->service = $service;
     }
 
-    public function productList(int $page = 1)
+    public function productList(int $page = 1, Request $request)
     {
-        $collection = collect(['list' => ProductResource::collection($this->service->getProductList($page))]);
+        $collection = collect(['list' => ProductResource::collection($this->service->getProductList($page, $request))]);
         return new ProductListResource($collection);
     }
 

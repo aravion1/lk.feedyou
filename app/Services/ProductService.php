@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Http\Requests\CreateProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Models\Product;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -13,19 +14,33 @@ use Mockery\Exception;
 class ProductService
 {
     const PRODUCT_IMG_PATH = 'images/products/%s/';
-    const COUNT_VIEW_LIST_ITEMS = 10;
 
-    public function getProductList($page = 1)
+    public function getProductList($page = 1, Request $request)
     {
-        return Product::take(self::COUNT_VIEW_LIST_ITEMS)
-            ->skip(($page - 1) * self::COUNT_VIEW_LIST_ITEMS)
-            ->get()->map(function ($item, $key) {
-                $item['img'] = StorageService::getAllImagesByDir(sprintf(self::PRODUCT_IMG_PATH, $item->id));
-                return $item;
-            });
+        $take = $request->get('take') ?? 10;
+
+        $productQuery = Product::select('*');
+
+        if ($request->get('showOnlyNotFillProperties') == 1) {
+            $productQuery = $productQuery->where('meas_value', 0);
+        }
+
+        if ($search = $request->get('search')) {
+            $productQuery = $productQuery->where('name', 'LIKE', '%' . $search . '%');
+        }
+
+        $productQuery = $productQuery->skip(($page - 1) * $take)->take($take);
+        $product = $productQuery->get()->map(function ($item, $key) {
+            $item['img'] = StorageService::getAllImagesByDir(sprintf(self::PRODUCT_IMG_PATH, $item->id));
+            return $item;
+        });
+
+
+        return $product;
     }
 
-    public function getById($id) {
+    public function getById($id)
+    {
         $product = Product::findOrFail($id);
         $product->img = StorageService::getAllImagesByDir(sprintf(self::PRODUCT_IMG_PATH, $product->id));
         return $product;
@@ -71,7 +86,8 @@ class ProductService
         return $product;
     }
 
-    public function delete(int $id) {
+    public function delete(int $id)
+    {
         return Product::findOrFail($id)->delete();
     }
 }

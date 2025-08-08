@@ -104,7 +104,7 @@ export default {
             }
             console.log(formData);
             api.post(`/products/${this.id}`, formData).then(function () {
-                alert("Обеовлено");
+                alert("Обновлено");
                 window.location.href = '/products'
             }).catch(function (e) {
                 alert("Ошибка:" + e)
