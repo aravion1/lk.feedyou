@@ -19,7 +19,7 @@ class CreateProductRequest extends ApiRequest
             'ccal' => 'required|numeric',
             'meas_value' => 'required|numeric',
             'chpu' => 'string',
-            'img_list' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048'
+            'img' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048'
         ];
     }
 }

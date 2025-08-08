@@ -20,7 +20,9 @@ class StorageService extends Storage
             foreach ($dirs as $dir) {
                 $files = $disk->files($dir);
                 if (count($files) > 0) {
-                    $imgList[$dir] = $files;
+                    foreach ($files as $file) {
+                        $imgList[$dir][] = Storage::url($file);
+                    }
                 }
             }
         }

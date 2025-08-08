@@ -20,9 +20,15 @@ class ProductService
         return Product::take(self::COUNT_VIEW_LIST_ITEMS)
             ->skip(($page - 1) * self::COUNT_VIEW_LIST_ITEMS)
             ->get()->map(function ($item, $key) {
-                $item['img_list'] = StorageService::getAllImagesByDir(sprintf(self::PRODUCT_IMG_PATH, $item->id));
+                $item['img'] = StorageService::getAllImagesByDir(sprintf(self::PRODUCT_IMG_PATH, $item->id));
                 return $item;
             });
+    }
+
+    public function getById($id) {
+        $product = Product::findOrFail($id);
+        $product->img = StorageService::getAllImagesByDir(sprintf(self::PRODUCT_IMG_PATH, $product->id));
+        return $product;
     }
 
     public function createProduct(CreateProductRequest $request)
@@ -46,20 +52,21 @@ class ProductService
         );
 
         if ($product) {
-            $filename = StorageService::saveProduct($product->id, 'original', $request->file('img_list'));
-            $product->img_list = ['original' => $filename];
+            $filename = StorageService::saveProduct($product->id, 'original', $request->file('img'));
+            $product->img = ['original' => $filename];
         }
         return $product;
     }
 
     public function updateProduct(int $id, UpdateProductRequest $request)
     {
-        $product = Product::findOrFail($id)->update(
-            $request->only(['name', 'proteins', 'fats', 'carbs', 'ccal', 'meas_value', 'chpu'])
-        )->refresh();
-
-        $filename = StorageService::saveProduct($product->id, 'original', $request->file('img_list'));
-        $product->img_list = ['original' => $filename];
+        $product = Product::findOrFail($id);
+        $product->update($request->only(['name', 'proteins', 'fats', 'carbs', 'ccal', 'meas_value', 'chpu']));
+        $product->refresh();
+        if ($request->file('img')) {
+            $filename = StorageService::saveProduct($product->id, 'original', $request->file('img'));
+            $product->img = ['original' => $filename];
+        }
 
         return $product;
     }

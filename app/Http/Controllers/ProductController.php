@@ -9,6 +9,7 @@ use App\Http\Resources\ProductResource;
 use App\Models\Product;
 use App\Services\ProductService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -27,7 +28,7 @@ class ProductController extends Controller
 
     public function productById(int $id)
     {
-        return new ProductResource(Product::findOrFail($id));
+        return new ProductResource($this->service->getById($id));
     }
 
     public function productByChpu(string $chpu)
@@ -45,5 +46,12 @@ class ProductController extends Controller
 
     public function delete(int $id) {
         return $this->service->delete($id);
+    }
+
+    public function deleteImage(Request $request) {
+        $path = $request->get('path');
+        $path = str_replace('/storage/', '/', $path);
+
+        return Storage::disk('public')->delete($path);
     }
 }

@@ -12,7 +12,9 @@ Route::prefix('products')->group(function () {
     Route::get('/get-by-id/{id}', [$controller, 'productById']);
     Route::get('/get-by-chpu/{chpu}', [$controller, 'productByChpu']);
     Route::post('/create', [$controller, 'create']);
-    Route::patch('/{id}', [$controller, 'updateProduct']);
+    Route::post('/image', [$controller, 'deleteImage']);
+    Route::post('/{id}', [$controller, 'updateProduct']);
     Route::delete('/{id}', [$controller, 'delete']);
-});
+
+})->middleware('auth:sanctum');
 
