@@ -21,7 +21,9 @@ class StorageService extends Storage
                 $files = $disk->files($dir);
                 if (count($files) > 0) {
                     foreach ($files as $file) {
-                        $imgList[$dir][] = Storage::url($file);
+                        $explodedDirPath = explode('/', $dir);
+
+                        $imgList[$explodedDirPath[count($explodedDirPath) - 1]][] = Storage::url($file);
                     }
                 }
             }
