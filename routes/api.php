@@ -3,7 +3,9 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-
+Route::get('/public/product/list/{page}', [\App\Http\Controllers\ProductController::class, 'productList'])->middleware(
+    \App\Http\Middleware\PublicAppMiddleware::class
+);
 
 Route::post('/user/auth', [\App\Http\Controllers\UserController::class, 'auth']);
 Route::prefix('products')->group(function () {
@@ -15,6 +17,5 @@ Route::prefix('products')->group(function () {
     Route::post('/image', [$controller, 'deleteImage']);
     Route::post('/{id}', [$controller, 'updateProduct']);
     Route::delete('/{id}', [$controller, 'delete']);
-
 })->middleware('auth:sanctum');
 

@@ -25,7 +25,8 @@ class ProductResource extends JsonResource
             'meas_value' => $this->meas_value,
             'chpu' => $this->chpu,
             'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at
+            'updated_at' => $this->updated_at,
+            'measure_type' => $this->measure_type
         ];
     }
 }

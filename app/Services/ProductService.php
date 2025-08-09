@@ -32,6 +32,17 @@ class ProductService
         $productQuery = $productQuery->skip(($page - 1) * $take)->take($take);
         $product = $productQuery->get()->map(function ($item, $key) {
             $item['img'] = StorageService::getAllImagesByDir(sprintf(self::PRODUCT_IMG_PATH, $item->id));
+            switch ($item['meas_value']) {
+                case 0:
+                    $item['measure_type'] = '-';
+                    break;
+                case 1:
+                    $item['measure_type'] = 'г';
+                    break;
+                case 2:
+                    $item['measure_type'] = 'мл';
+                    break;
+            }
             return $item;
         });
 
