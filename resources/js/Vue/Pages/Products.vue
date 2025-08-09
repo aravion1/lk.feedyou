@@ -148,14 +148,16 @@ export default {
         },
         setPage: function (page) {
             if (!(page < 0 || page > this.allPagesCount)) {
-                this.page = +page
-                this.setFilter();
-                localStorage.setItem('product-page', page);
-                const url = new URL(window.location.href)
-                url.searchParams.set('page', page);
-                history.pushState(null, "", url);
-                this.getProducts();
+                page = 1;
             }
+
+            this.setFilter();
+            this.page = +page
+            localStorage.setItem('product-page', page);
+            const url = new URL(window.location.href)
+            url.searchParams.set('page', page);
+            history.pushState(null, "", url);
+            this.getProducts();
         },
         setFilter: function () {
             localStorage.setItem('takeProduct', this.take);
