@@ -6,6 +6,7 @@
                 <span class="fs-4">Личный кабинет</span> </a>
                 <ul class="nav nav-pills">
                     <li class="nav-item"><a href="/products" class="nav-link" v-bind:class="{active: active == 'products'}" aria-current="page">Продукты</a></li>
+                    <li class="nav-item"><a href="/product_categories" class="nav-link" v-bind:class="{active: active == 'produсt_categories'}" aria-current="page">Категории продуктов</a></li>
                     <li class="nav-item"><a v-on:click="logout" href="#" class="nav-link">Выйти</a></li>
                 </ul>
             </header>

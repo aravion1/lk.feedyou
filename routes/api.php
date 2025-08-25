@@ -19,3 +19,11 @@ Route::prefix('products')->group(function () {
     Route::delete('/{id}', [$controller, 'delete']);
 })->middleware('auth:sanctum');
 
+Route::prefix('/product_categories')->group(function() {
+    $controller = \App\Http\Controllers\ProductCategoriesController::class;
+
+    Route::post('/save', [$controller, 'save']);
+    Route::get('/list', [$controller, 'all']);
+    Route::delete('/{id}', [$controller, 'delete']);
+})->middleware('auth:sanctum');
+

@@ -4,6 +4,7 @@ import user from "../user.js";
 import Dashboard from "../Vue/Pages/Dashboard.vue";
 import Products from "../Vue/Pages/Products.vue";
 import EditProductForm from "../Vue/Pages/EditProductForm.vue";
+import ProductCategories from "../Vue/Pages/ProductCategories.vue";
 const routes = [
     {
         name: 'login',
@@ -24,7 +25,12 @@ const routes = [
         name: 'edit_products',
         path: '/products/edit',
         component: EditProductForm
-    }
+    },
+    {
+        name: 'product_categories',
+        path: '/product_categories',
+        component: ProductCategories
+    },
 ];
 
 const router = createRouter({
