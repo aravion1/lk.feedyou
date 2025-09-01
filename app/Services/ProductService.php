@@ -4,9 +4,11 @@ namespace App\Services;
 
 use App\Http\Requests\CreateProductRequest;
 use App\Http\Requests\UpdateProductRequest;
+use App\Http\Resources\ProductCategoryResource;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Mockery\Exception;
@@ -77,6 +79,16 @@ class ProductService
             $data
         );
 
+        if (!empty($request->array('categories'))) {
+            DB::table('categories_of_products')->where('product_id', $product->id)->delete();
+            foreach ($request->array('categories') as $category_id) {
+                DB::table('categories_of_products')->insert([
+                    'product_id' => $product->id,
+                    'product_category_id' => $category_id
+                ]);
+            }
+        }
+
         if ($product) {
             $filename = StorageService::saveProduct($product->id, 'original', $request->file('img'));
             $product->img = ['original' => $filename];
@@ -94,11 +106,24 @@ class ProductService
             $product->img = ['original' => $filename];
         }
 
+        if (!empty($request->array('categories'))) {
+            DB::table('categories_of_products')->where('product_id', $product->id)->delete();
+            foreach ($request->array('categories') as $category_id) {
+                DB::table('categories_of_products')->insert([
+                    'product_id' => $product->id,
+                    'product_category_id' => $category_id
+                ]);
+            }
+        }
+
         return $product;
     }
 
     public function delete(int $id)
     {
-        return Product::findOrFail($id)->delete();
+        return DB::transaction(function () use ($id) {
+            Product::findOrFail($id)->delete();
+            DB::table('categories_of_products')->where('product_id', $id)->delete();
+        });
     }
 }

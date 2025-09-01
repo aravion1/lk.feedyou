@@ -38,6 +38,13 @@
                     </li>
                 </ul>
             </div>
+            <div class="mb-3 mw-100">
+                <label for="exampleInputEmail1" class="form-label">Категории</label>
+                <select v-model="form.categories" class="form-select" aria-label="Default select example" multiple>
+                    <option value="">Без категории</option>
+                    <option v-for="item in categories" v-bind:value="item.id"> {{item.title}} </option>
+                </select>
+            </div>
             <div class="mb-3">
                 <label for="formFile" class="form-label">Добавить изображение</label>
                 <input v-on:change="addFile" class="form-control" type="file" id="formFile">
@@ -60,6 +67,7 @@ export default {
                 fats: '',
                 carbs: '',
                 ccal: '',
+                categories: [],
                 meas_value: 0,
                 img: null
             },
@@ -69,9 +77,11 @@ export default {
                 fats: '',
                 carbs: '',
                 ccal: '',
+                categories: [],
                 meas_value: 0,
                 img: null
             },
+            categories: [],
             isFormUpdate: false,
             id: null
         }
@@ -90,6 +100,7 @@ export default {
                 self.form.carbs = self.old_form.carbs
                 self.form.ccal = self.old_form.ccal
                 self.form.meas_value = self.old_form.meas_value
+                self.form.categories = self.old_form.categories
             }).catch(function (e) {
                 alert(e)
             })
@@ -126,9 +137,18 @@ export default {
             }).catch(function (e) {
                 alert('Ошибка:' + e);
             })
+        },
+        getCategories: function () {
+            let self = this;
+            api.get('/product_categories/list').then(function (resp) {
+                self.categories = resp.data.data;
+            }).catch(function (e) {
+                alert('Ошибка: ' + e)
+            })
         }
     },
     mounted() {
+        this.getCategories();
         let params = new URLSearchParams(document.location.search)
         let id = params.get('id');
         this.isFormUpdate = id ? true : false;

@@ -42,6 +42,7 @@
                     <th>Углеводы/г</th>
                     <th>Ккал</th>
                     <th>Мера</th>
+                    <th>Количество категорий</th>
                     <th>Изображения</th>
                     <th>Действия</th>
                 </tr>
@@ -57,6 +58,7 @@
                     <td v-if="product.meas_value == 0"> - </td>
                     <td v-else-if="product.meas_value == 1"> г </td>
                     <td v-else> мл </td>
+                    <td>({{product.categories.length}})</td>
                     <td>
                         <ul v-for="img in product.img" class="list-group">
                             <li v-for="item in img" class="list-group-item d-flex justify-content-evenly">
