@@ -62,7 +62,7 @@ class ProductService
     public function getProductsById($ids)
     {
         $products = Product::where('id', 'in', $ids)->get()->map(function ($item) {
-            $item->img = StorageService::getAllImagesByDir($item->id);
+            $item['img'] = StorageService::getAllImagesByDir($item->id);
         });
         return $products;
     }
@@ -70,7 +70,7 @@ class ProductService
     public function search(string $search)
     {
         return Product::where('name', 'LIKE', '%' . $search . '%')->get()->map(function ($item) {
-            $item->img = StorageService::getAllImagesByDir($item->id);
+            $item['img'] = StorageService::getAllImagesByDir($item->id);
             return $item;
         });
     }
