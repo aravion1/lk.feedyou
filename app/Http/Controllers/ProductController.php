@@ -38,7 +38,7 @@ class ProductController extends Controller
             'ids.*' => 'exists:products,id'
         ]);
 
-        return ProductResource::collection($this->service->getProductsById(...$validated['ids']));
+        return $this->service->getProductsById($validated['ids']);
     }
 
     public function search(Request $request)
@@ -47,7 +47,7 @@ class ProductController extends Controller
             'search' => 'required|string|min:3'
         ]);
 
-        return ProductResource::collection($this->service->search($validated['search']));
+        return $this->service->search($validated['search']);
 
     }
 
