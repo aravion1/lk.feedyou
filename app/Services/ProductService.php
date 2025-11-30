@@ -69,7 +69,10 @@ class ProductService
 
     public function search(string $search)
     {
-        return Product::where('name', 'LIKE', '%' . $search . '%')->get();
+        return Product::where('name', 'LIKE', '%' . $search . '%')->get()->map(function ($item) {
+            $item->img = StorageService::getAllImagesByDir($item->id);
+            return $item;
+        });
     }
 
     public function createProduct(CreateProductRequest $request)
