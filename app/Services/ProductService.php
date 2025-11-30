@@ -61,8 +61,9 @@ class ProductService
 
     public function getProductsById($ids)
     {
-        $products = Product::where('id', 'in', $ids)->get()->map(function ($item) {
+        $products = Product::whereIn('id', $ids)->get()->map(function ($item) {
             $item['img'] = StorageService::getAllImagesByDir(sprintf(self::PRODUCT_IMG_PATH, $item->id));
+            return $item;
         });
         return $products;
     }
