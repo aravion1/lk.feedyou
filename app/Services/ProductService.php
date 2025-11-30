@@ -59,6 +59,21 @@ class ProductService
         return $product;
     }
 
+    public function getProductsById(...$ids)
+    {
+        $products = Product::where('id', 'in', $ids)->get()->map(function ($item) {
+            $item->img = StorageService::getAllImagesByDir($item->id);
+        });
+        return $products;
+    }
+
+    public function search(string $search)
+    {
+        return Product::where('name', 'LIKE', '%' . $search . '%')->get()->map(function ($item, $key) {
+            $item->img = StorageService::getAllImagesByDir($item->id);
+        });
+    }
+
     public function createProduct(CreateProductRequest $request)
     {
         $data = $request->only(

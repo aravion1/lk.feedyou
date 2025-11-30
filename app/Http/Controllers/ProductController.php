@@ -31,6 +31,26 @@ class ProductController extends Controller
         return new ProductResource($this->service->getById($id));
     }
 
+    public function getProductsById(Request $request)
+    {
+        $validated = $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'exists:products,id'
+        ]);
+
+        return ProductResource::collection($this->service->getProductsById(...$validated['ids']));
+    }
+
+    public function search(Request $request)
+    {
+        $validated = $request->validate([
+            'search' => 'required|string|min:3'
+        ]);
+
+        return ProductResource::collection($this->service->search($validated['search']));
+
+    }
+
     public function productByChpu(string $chpu)
     {
         return new ProductResource(Product::where('chpu', $chpu)->firstOrFail());

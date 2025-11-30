@@ -3,9 +3,11 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/public/product/list/{page}', [\App\Http\Controllers\ProductController::class, 'productList'])->middleware(
-    \App\Http\Middleware\PublicAppMiddleware::class
-);
+Route::middleware(\App\Http\Middleware\PublicAppMiddleware::class)->group(function () {
+    Route::get('/public/product/list/{page}', [\App\Http\Controllers\ProductController::class, 'productList']);
+    Route::get('/public/product/list_by_ids', [\App\Http\Controllers\ProductController::class, 'getProductsById']);
+    Route::get('/public/product/search', [\App\Http\Controllers\ProductController::class, 'search']);
+});
 
 Route::post('/user/auth', [\App\Http\Controllers\UserController::class, 'auth']);
 Route::prefix('products')->group(function () {
