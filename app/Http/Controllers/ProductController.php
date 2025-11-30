@@ -35,10 +35,10 @@ class ProductController extends Controller
     {
         $validated = $request->validate([
             'ids' => 'required|array',
-            'ids.*' => 'exists:products,id'
+            'ids.*' => 'integer'
         ]);
 
-        return $this->service->getProductsById($validated['ids']);
+        return response()->json($this->service->getProductsById($validated['ids']));
     }
 
     public function search(Request $request)
@@ -47,7 +47,7 @@ class ProductController extends Controller
             'search' => 'required|string|min:3'
         ]);
 
-        return $this->service->search($validated['search']);
+        return response()->json($this->service->search($validated['search']));
 
     }
 
